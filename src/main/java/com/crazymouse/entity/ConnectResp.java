@@ -43,11 +43,8 @@ public class ConnectResp extends CmppHead {
     }
 
     @Override
-    protected byte[] doSubEncode() {
+    protected void doSubEncode(ByteBuffer bb) {
 
-        totalLength = protocalType == Constants.PROTOCALTYPE_CMPP2 ? 30 : 33;
-        commandId = CMPPConstant.CMPP_CONNECT_RESP;
-        ByteBuffer bb = ByteBuffer.allocate(totalLength - 12);
         if (protocalType == Constants.PROTOCALTYPE_CMPP2) {
             bb.put((byte) status);
         }else {
@@ -55,17 +52,20 @@ public class ConnectResp extends CmppHead {
         }
         bb.put(authenticatorIsmg);
         bb.put(version);
-        return bb.array();
     }
 
     @Override
     protected void doSubDecode(ByteBuffer bb) {
 
         status = totalLength == 30 ? bb.get() : bb.getInt();
-        byte[] tmp = new byte[16];
-        bb.get(tmp);
         bb.get(authenticatorIsmg);
         version = bb.get();
+    }
+
+    @Override
+    protected void processHead() {
+        totalLength = protocalType == Constants.PROTOCALTYPE_CMPP2 ? 30 : 33;
+        commandId = CMPPConstant.CMPP_CONNECT_RESP;
     }
 
     @Override

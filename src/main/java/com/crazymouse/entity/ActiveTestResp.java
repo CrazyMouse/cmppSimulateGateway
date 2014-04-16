@@ -24,13 +24,18 @@ public class ActiveTestResp extends CmppHead {
     }
 
     @Override
-    protected byte[] doSubEncode() {
-        return new byte[]{reserved};
+    protected void doSubEncode(ByteBuffer bb) {
+        bb.put(reserved);
     }
 
     @Override
     protected void doSubDecode(ByteBuffer bb) {
         reserved = bb.get();
+    }
+
+    @Override
+    protected void processHead() {
+
     }
 
     @Override
@@ -47,11 +52,7 @@ public class ActiveTestResp extends CmppHead {
 
         ActiveTestResp that = (ActiveTestResp) o;
 
-        if (reserved != that.reserved) {
-            return false;
-        }
-
-        return true;
+        return reserved == that.reserved;
     }
 
     @Override

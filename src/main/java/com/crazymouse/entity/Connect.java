@@ -16,16 +16,11 @@ public class Connect extends CmppHead {
 
 
     @Override
-    protected byte[] doSubEncode() {
-        totalLength = 39;
-        commandId = CMPPConstant.CMPP_CONNECT;
-
-        ByteBuffer bb = ByteBuffer.allocate(totalLength - 12);
+    protected void doSubEncode(ByteBuffer bb) {
         bb.put(sourceAddr);
         bb.put(authenticatorSource);
         bb.put(version);
         bb.put(timeStamp);
-        return bb.array();
     }
 
     @Override
@@ -34,6 +29,12 @@ public class Connect extends CmppHead {
         bb.get(authenticatorSource);
         version = bb.get();
         bb.get(timeStamp);
+    }
+
+    @Override
+    protected void processHead() {
+        totalLength = 39;
+        commandId = CMPPConstant.CMPP_CONNECT;
     }
 
     @Override

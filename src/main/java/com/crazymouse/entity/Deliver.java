@@ -19,7 +19,7 @@ public class Deliver extends CmppHead {
     private byte[] srcTerminalId;
     private byte srcTerminalType;
     private byte registeredDelivery;
-    private byte msgLength;
+    private int msgLength;//由于符号位关系，这里用int替代byte
     private byte[] msgContent;
 
     private byte[] msg_Id = new byte[8];
@@ -36,16 +36,8 @@ public class Deliver extends CmppHead {
 
 
     @Override
-    protected byte[] doSubEncode() {
-
+    protected void doSubEncode(ByteBuffer bb) {
         boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
-        if (null == msgContent || "".equals(msgContent)) {
-            totalLength = isCmpp2 ? 145 : 180;
-        }else {
-            processTotalLength(isCmpp2);
-        }
-        commandId = CMPPConstant.APP_DELIVER;
-        ByteBuffer bb = ByteBuffer.allocate(totalLength - 12);
         bb.put(msgId);
         bb.put(destId);
         bb.put(serviceId);
@@ -57,6 +49,7 @@ public class Deliver extends CmppHead {
             bb.put(srcTerminalType);
         }
         bb.put(registeredDelivery);
+        bb.put((byte) msgLength);
         if (msgContent != null) {
             bb.put(msgContent);
         }else {
@@ -68,20 +61,32 @@ public class Deliver extends CmppHead {
             bb.put(smscSequence);
         }
         bb.put(reservedOrLinkId);
-        return bb.array();
+    }
+
+    @Override
+    protected void processHead() {
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        if (null == msgContent) {
+            totalLength = isCmpp2 ? 145 : 180;
+        }else {
+            processTotalLength(isCmpp2);
+        }
+        commandId = CMPPConstant.APP_DELIVER;
     }
 
     private void processTotalLength(boolean isCmpp2) {
         if (isCmpp2) {
-            totalLength = 73 + msgLength;
+            msgLength = registeredDelivery == 1 ? 60 : msgContent.length;
+            totalLength = 85 + msgLength;
         }else {
-            totalLength = 97 + msgLength;
+            msgLength = registeredDelivery == 1 ? 71 : msgContent.length;
+            totalLength = 109 + msgLength;
         }
     }
 
     @Override
     protected void doSubDecode(ByteBuffer bb) {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;//tdod protocalType赋值
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
         bb.get(msgId);
         bb.get(destId);
         bb.get(serviceId);
@@ -94,7 +99,7 @@ public class Deliver extends CmppHead {
             srcTerminalType = bb.get();
         }
         registeredDelivery = bb.get();
-        msgLength = bb.get();
+        msgLength = bb.get() & 0xFF;
         if (registeredDelivery == 1) {
             bb.get(msg_Id);
             bb.get(stat);
@@ -110,6 +115,7 @@ public class Deliver extends CmppHead {
         reservedOrLinkId = new byte[isCmpp2 ? 8 : 20];
         bb.get(reservedOrLinkId);
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -195,7 +201,7 @@ public class Deliver extends CmppHead {
         result = 31 * result + (srcTerminalId != null ? Arrays.hashCode(srcTerminalId) : 0);
         result = 31 * result + (int) srcTerminalType;
         result = 31 * result + (int) registeredDelivery;
-        result = 31 * result + (int) msgLength;
+        result = 31 * result + msgLength;
         result = 31 * result + (msgContent != null ? Arrays.hashCode(msgContent) : 0);
         result = 31 * result + (msg_Id != null ? Arrays.hashCode(msg_Id) : 0);
         result = 31 * result + (stat != null ? Arrays.hashCode(stat) : 0);
@@ -279,12 +285,8 @@ public class Deliver extends CmppHead {
         this.registeredDelivery = registeredDelivery;
     }
 
-    public byte getMsgLength() {
+    public int getMsgLength() {
         return msgLength;
-    }
-
-    public void setMsgLength(byte msgLength) {
-        this.msgLength = msgLength;
     }
 
     public byte[] getMsgContent() {

@@ -14,13 +14,17 @@ public class ActiveTest extends CmppHead {
     }
 
     @Override
-    protected byte[] doSubEncode() {
+    protected void doSubEncode(ByteBuffer bb) {
 
-        return new byte[0];
     }
 
     @Override
     protected void doSubDecode(ByteBuffer bb) {
+
+    }
+
+    @Override
+    protected void processHead() {
 
     }
 }

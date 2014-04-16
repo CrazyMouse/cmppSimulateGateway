@@ -18,18 +18,14 @@ public class SubmitResp extends CmppHead {
     }
 
     @Override
-    protected byte[] doSubEncode() {
+    protected void doSubEncode(ByteBuffer bb) {
         boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
-        totalLength = isCmpp2 ? 21 : 24;
-        commandId = CMPPConstant.APP_SUBMIT_RESP;
-        ByteBuffer bb = ByteBuffer.allocate(totalLength - 12);
         bb.put(msgId);
         if (isCmpp2) {
             bb.put((byte) result);
         }else {
             bb.putInt(result);
         }
-        return bb.array();
     }
 
     @Override
@@ -41,6 +37,13 @@ public class SubmitResp extends CmppHead {
         }else {
             result = bb.getInt();
         }
+    }
+
+    @Override
+    protected void processHead() {
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        totalLength = isCmpp2 ? 21 : 24;
+        commandId = CMPPConstant.APP_SUBMIT_RESP;
     }
 
     @Override

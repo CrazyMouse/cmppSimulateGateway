@@ -17,5 +17,10 @@ public class byteBufferTest {
         byte[] bytes = byteBuffer.array();
 
         System.out.println(byteBuffer.position());
+
+        int a = 255;
+        int b = (byte)a & 0xFF;
+        System.out.println((byte) a);
+        System.out.println(b);
     }
 }

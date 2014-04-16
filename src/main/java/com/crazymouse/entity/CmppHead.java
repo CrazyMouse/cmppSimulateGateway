@@ -43,8 +43,9 @@ public abstract class CmppHead implements Serializable {
      * 子类字节获取，要负责父类中三属性数据生成
      *
      * @return
+     * @param bb
      */
-    protected abstract byte[] doSubEncode();
+    protected abstract void doSubEncode(ByteBuffer bb);
 
     /**
      * 子类解码，被父类回调
@@ -59,14 +60,16 @@ public abstract class CmppHead implements Serializable {
      * @return
      */
     public byte[] doEncode() {
-        byte[] sub = doSubEncode();
+        processHead();
         ByteBuffer bb = ByteBuffer.allocate(totalLength);
         bb.putInt(totalLength);
         bb.putInt(commandId);
         bb.putInt(secquenceId);
-        bb.put(sub);
+        doSubEncode(bb);
         return bb.array();
     }
+
+    protected abstract void processHead();
 
     /**
      * 字节数组解码为对象

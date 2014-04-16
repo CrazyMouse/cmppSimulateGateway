@@ -1,7 +1,5 @@
 package com.crazymouse.entity;
 
-import com.crazymouse.util.SequenceGenerate;
-
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -31,26 +29,29 @@ public class Submit extends CmppHead {
     private byte destUsrTl;
     private byte[] destTerminalIds;
     private byte destTerminalType;
-    private byte msgLength;
+    private int msgLength;
     private byte[] msgContent;
     private byte[] ReserveOrLinkId;
 
     public Submit(int protocalType) {
         super.protocalType = protocalType;
     }
-
     @Override
-    protected byte[] doSubEncode() {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
-        if (isCmpp2) {
-            totalLength = 134 + 21 * destUsrTl + msgLength;
-        }else {
-            totalLength = 139 + 32 * destUsrTl + msgLength;
-        }
-        commandId = CMPPConstant.APP_SUBMIT;
-        secquenceId = SequenceGenerate.getSequenceId();
+        protected void processHead() {
+        msgLength = msgContent.length;
+                boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+                if (isCmpp2) {
+                    totalLength = 137 + 21 * destUsrTl + msgLength;
+                }else {
+                    totalLength = 162 + 32 * destUsrTl + msgLength;
+                }
+                commandId = CMPPConstant.APP_SUBMIT;
 
-        ByteBuffer bb = ByteBuffer.allocate(totalLength);
+        }
+    @Override
+    protected void doSubEncode(ByteBuffer bb) {
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+
         bb.put(msgId);
         bb.put(pkTotal);
         bb.put(pkNumber);
@@ -75,42 +76,45 @@ public class Submit extends CmppHead {
         if (!isCmpp2) {
             bb.put(destTerminalType);
         }
-        bb.put(msgLength);
+
+        bb.put((byte) msgLength);
         bb.put(msgContent);
         bb.put(ReserveOrLinkId);
-        return bb.array();
     }
 
     @Override
     protected void doSubDecode(ByteBuffer bb) {
         boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
         bb.get(msgId);
-        bb.get(pkTotal);
-        bb.get(pkNumber);
-        bb.get(registeredDelivery);
-        bb.get(msgLevel);
+        pkTotal = bb.get();
+        pkNumber= bb.get();
+        registeredDelivery= bb.get();
+        msgLevel=bb.get();
         bb.get(serviceId);
-        bb.get(feeUserType);
+        feeUserType=bb.get();
         feeTerminalId = new byte[isCmpp2 ? 21 : 32];
         bb.get(feeTerminalId);
         if (!isCmpp2) { feeTerminalType = bb.get(); }
-        bb.get(tppId);
-        bb.get(msgFmt);
+        tppId=bb.get();
+        msgFmt=bb.get();
         bb.get(msgSrc);
         bb.get(feeType);
         bb.get(feeCode);
         bb.get(validTime);
         bb.get(atTime);
         bb.get(srcId);
-        bb.get(destUsrTl);
+        destUsrTl=bb.get();
         destTerminalIds = new byte[isCmpp2 ? 21 * destUsrTl : 32 * destUsrTl];
         bb.get(destTerminalIds);
         if (!isCmpp2) { destTerminalType = bb.get(); }
-        bb.get(msgLength);
+        msgLength = bb.get() & 0xFF;
+        msgContent = new byte[msgLength];
         bb.get(msgContent);
         ReserveOrLinkId = new byte[isCmpp2 ? 8 : 20];
         bb.get(ReserveOrLinkId);
     }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -222,7 +226,7 @@ public class Submit extends CmppHead {
         result = 31 * result + (int) destUsrTl;
         result = 31 * result + (destTerminalIds != null ? Arrays.hashCode(destTerminalIds) : 0);
         result = 31 * result + (int) destTerminalType;
-        result = 31 * result + (int) msgLength;
+        result = 31 * result + msgLength;
         result = 31 * result + (msgContent != null ? Arrays.hashCode(msgContent) : 0);
         result = 31 * result + (ReserveOrLinkId != null ? Arrays.hashCode(ReserveOrLinkId) : 0);
         return result;
@@ -388,12 +392,8 @@ public class Submit extends CmppHead {
         this.destTerminalType = destTerminalType;
     }
 
-    public byte getMsgLength() {
+    public int getMsgLength() {
         return msgLength;
-    }
-
-    public void setMsgLength(byte msgLength) {
-        this.msgLength = msgLength;
     }
 
     public byte[] getMsgContent() {
