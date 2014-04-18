@@ -1,5 +1,7 @@
 package com.crazymouse.entity;
 
+import com.google.common.primitives.UnsignedBytes;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -32,12 +34,13 @@ public class Deliver extends CmppHead {
 
     public Deliver(int protocalType) {
         super.protocalType = protocalType;
+        super.commandId = CMPPConstant.APP_DELIVER;
     }
 
 
     @Override
     protected void doSubEncode(ByteBuffer bb) {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         bb.put(msgId);
         bb.put(destId);
         bb.put(serviceId);
@@ -65,13 +68,12 @@ public class Deliver extends CmppHead {
 
     @Override
     protected void processHead() {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         if (null == msgContent) {
             totalLength = isCmpp2 ? 145 : 180;
         }else {
             processTotalLength(isCmpp2);
         }
-        commandId = CMPPConstant.APP_DELIVER;
     }
 
     private void processTotalLength(boolean isCmpp2) {
@@ -86,7 +88,7 @@ public class Deliver extends CmppHead {
 
     @Override
     protected void doSubDecode(ByteBuffer bb) {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         bb.get(msgId);
         bb.get(destId);
         bb.get(serviceId);
@@ -99,7 +101,7 @@ public class Deliver extends CmppHead {
             srcTerminalType = bb.get();
         }
         registeredDelivery = bb.get();
-        msgLength = bb.get() & 0xFF;
+        msgLength = UnsignedBytes.toInt(bb.get());
         if (registeredDelivery == 1) {
             bb.get(msg_Id);
             bb.get(stat);

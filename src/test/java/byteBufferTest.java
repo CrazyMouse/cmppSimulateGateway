@@ -1,3 +1,5 @@
+import com.google.common.primitives.UnsignedBytes;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -19,7 +21,7 @@ public class byteBufferTest {
         System.out.println(byteBuffer.position());
 
         int a = 255;
-        int b = (byte)a & 0xFF;
+        int b = UnsignedBytes.toInt((byte) a);
         System.out.println((byte) a);
         System.out.println(b);
     }

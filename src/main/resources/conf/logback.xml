@@ -8,14 +8,15 @@
         <Encoding>UTF-8</Encoding>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %C{50} :%L- %msg%n
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%p]%C.%M \(%F:%L\):%msg%n
             </pattern>
         </layout>
     </appender>
     <appender name="STANDARD"  class="ch.qos.logback.core.rolling.RollingFileAppender">
             <Encoding>UTF-8</Encoding>
+            <file>server.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <FileNamePattern>${LOG_HOME}/standard.%d{yyyy-MM-dd}.log</FileNamePattern>
+                <FileNamePattern>${LOG_HOME}/server.%d{yyyy-MM-dd}.log</FileNamePattern>
                 <MaxHistory>30</MaxHistory>
             </rollingPolicy>
             <layout class="ch.qos.logback.classic.PatternLayout">
@@ -31,6 +32,6 @@
     <!-- 日志输出级别 -->
     <root level="debug">
         <appender-ref ref="STANDARD"/>
-        <!--<appender-ref ref="STDOUT" />-->
+        <appender-ref ref="STDOUT" />
     </root>
 </configuration>

@@ -11,7 +11,7 @@ public class ActiveTestResp extends CmppHead {
     private byte reserved;
 
     public ActiveTestResp() {
-        totalLength = 13;
+
         commandId = CMPPConstant.APP_ACTIVE_TEST_RESP;
     }
 
@@ -35,7 +35,7 @@ public class ActiveTestResp extends CmppHead {
 
     @Override
     protected void processHead() {
-
+        totalLength = 13;
     }
 
     @Override

@@ -14,6 +14,9 @@ public class Connect extends CmppHead {
     private byte version;
     private byte[] timeStamp = new byte[4];
 
+    public Connect() {
+        commandId = CMPPConstant.CMPP_CONNECT;
+    }
 
     @Override
     protected void doSubEncode(ByteBuffer bb) {
@@ -34,7 +37,6 @@ public class Connect extends CmppHead {
     @Override
     protected void processHead() {
         totalLength = 39;
-        commandId = CMPPConstant.CMPP_CONNECT;
     }
 
     @Override

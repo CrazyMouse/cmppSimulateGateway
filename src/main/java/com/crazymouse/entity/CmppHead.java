@@ -42,8 +42,8 @@ public abstract class CmppHead implements Serializable {
     /**
      * 子类字节获取，要负责父类中三属性数据生成
      *
-     * @return
      * @param bb
+     * @return
      */
     protected abstract void doSubEncode(ByteBuffer bb);
 

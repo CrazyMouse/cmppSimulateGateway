@@ -14,12 +14,13 @@ public class DeliverResp extends CmppHead {
 
     public DeliverResp(int protocalType) {
         super.protocalType = protocalType;
+        super.commandId = CMPPConstant.APP_DELIVER_RESP;
     }
 
 
     @Override
     protected void doSubEncode(ByteBuffer bb) {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         bb.put(msgId);
         if (isCmpp2) {
             bb.put((byte) result);
@@ -40,9 +41,8 @@ public class DeliverResp extends CmppHead {
 
     @Override
     protected void processHead() {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         totalLength = isCmpp2 ? 21 : 24;
-        commandId = CMPPConstant.APP_DELIVER_RESP;
     }
 
     @Override

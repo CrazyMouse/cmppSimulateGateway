@@ -16,13 +16,13 @@ public class ConnectRespTest {
     @Test
         public void testEncodeAndDecode() throws Exception {
         Random random = new Random();
-            ConnectResp cr2 = new ConnectResp(Constants.PROTOCALTYPE_CMPP2);
-            ConnectResp cr3 = new ConnectResp(Constants.PROTOCALTYPE_CMPP3);
+            ConnectResp cr2 = new ConnectResp(Constants.PROTOCALTYPE_VERSION_CMPP2);
+            ConnectResp cr3 = new ConnectResp(Constants.PROTOCALTYPE_VERSION_CMPP3);
         cr2.setStatus(2);
         random.nextBytes(cr2.getAuthenticatorIsmg());
         cr2.setVersion((byte) 1);
         byte[] cr2Bytes = cr2.doEncode();
-        ConnectResp cr2n = new ConnectResp(Constants.PROTOCALTYPE_CMPP2);
+        ConnectResp cr2n = new ConnectResp(Constants.PROTOCALTYPE_VERSION_CMPP2);
         cr2n.doDecode(cr2Bytes);
         assertEquals(cr2, cr2n);
 
@@ -31,10 +31,10 @@ public class ConnectRespTest {
         cr3.setVersion((byte) 2);
 
         byte[] cr3Bytes = cr3.doEncode();
-        ConnectResp cr3n = new ConnectResp(Constants.PROTOCALTYPE_CMPP3);
+        ConnectResp cr3n = new ConnectResp(Constants.PROTOCALTYPE_VERSION_CMPP3);
         cr3n.doDecode(cr3Bytes);
         assertEquals(cr3, cr3n);
-        cr3n.protocalType = Constants.PROTOCALTYPE_CMPP2;
+        cr3n.protocalType = Constants.PROTOCALTYPE_VERSION_CMPP2;
         assertFalse(cr3.equals(cr3n));
 
 

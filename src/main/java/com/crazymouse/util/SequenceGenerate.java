@@ -17,7 +17,6 @@ public class SequenceGenerate {
         }else {
             sequenceId.incrementAndGet(); //sequenceId.addAndGet(1)出错
         }
-
         return sequenceId.get();
     }
 }

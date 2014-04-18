@@ -15,11 +15,12 @@ public class SubmitResp extends CmppHead {
 
     public SubmitResp(int protocalType) {
         super.protocalType = protocalType;
+        super.commandId = CMPPConstant.APP_SUBMIT_RESP;
     }
 
     @Override
     protected void doSubEncode(ByteBuffer bb) {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         bb.put(msgId);
         if (isCmpp2) {
             bb.put((byte) result);
@@ -30,7 +31,7 @@ public class SubmitResp extends CmppHead {
 
     @Override
     protected void doSubDecode(ByteBuffer bb) {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         bb.get(msgId);
         if (isCmpp2) {
             result = bb.get();
@@ -41,9 +42,8 @@ public class SubmitResp extends CmppHead {
 
     @Override
     protected void processHead() {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         totalLength = isCmpp2 ? 21 : 24;
-        commandId = CMPPConstant.APP_SUBMIT_RESP;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.crazymouse.netty;
+package com.crazymouse.business;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;

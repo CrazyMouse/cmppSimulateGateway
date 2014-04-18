@@ -16,6 +16,7 @@ public class ConnectResp extends CmppHead {
 
     public ConnectResp(int protocalType) {
         super.protocalType = protocalType;
+        super.commandId = CMPPConstant.CMPP_CONNECT_RESP;
     }
 
     public int getStatus() {
@@ -45,7 +46,7 @@ public class ConnectResp extends CmppHead {
     @Override
     protected void doSubEncode(ByteBuffer bb) {
 
-        if (protocalType == Constants.PROTOCALTYPE_CMPP2) {
+        if (protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2) {
             bb.put((byte) status);
         }else {
             bb.putInt(status);
@@ -64,8 +65,7 @@ public class ConnectResp extends CmppHead {
 
     @Override
     protected void processHead() {
-        totalLength = protocalType == Constants.PROTOCALTYPE_CMPP2 ? 30 : 33;
-        commandId = CMPPConstant.CMPP_CONNECT_RESP;
+        totalLength = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 30 : 33;
     }
 
     @Override

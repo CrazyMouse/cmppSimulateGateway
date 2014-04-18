@@ -1,5 +1,7 @@
 package com.crazymouse.entity;
 
+import com.google.common.primitives.UnsignedBytes;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -19,6 +21,7 @@ public class Submit extends CmppHead {
     private byte[] feeTerminalId;
     private byte feeTerminalType;
     private byte tppId;
+    private byte tpUdhi;
     private byte msgFmt;
     private byte[] msgSrc = new byte[6];
     private byte[] feeType = new byte[2];
@@ -35,22 +38,23 @@ public class Submit extends CmppHead {
 
     public Submit(int protocalType) {
         super.protocalType = protocalType;
+        super.commandId = CMPPConstant.APP_SUBMIT;
     }
-    @Override
-        protected void processHead() {
-        msgLength = msgContent.length;
-                boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
-                if (isCmpp2) {
-                    totalLength = 137 + 21 * destUsrTl + msgLength;
-                }else {
-                    totalLength = 162 + 32 * destUsrTl + msgLength;
-                }
-                commandId = CMPPConstant.APP_SUBMIT;
 
+    @Override
+    protected void processHead() {
+        msgLength = msgContent.length;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
+        if (isCmpp2) {
+            totalLength = 138 + 21 * destUsrTl + msgLength;
+        }else {
+            totalLength = 163 + 32 * destUsrTl + msgLength;
         }
+    }
+
     @Override
     protected void doSubEncode(ByteBuffer bb) {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
 
         bb.put(msgId);
         bb.put(pkTotal);
@@ -64,6 +68,7 @@ public class Submit extends CmppHead {
             bb.put(feeTerminalType);
         }
         bb.put(tppId);
+        bb.put(tpUdhi);
         bb.put(msgFmt);
         bb.put(msgSrc);
         bb.put(feeType);
@@ -84,36 +89,36 @@ public class Submit extends CmppHead {
 
     @Override
     protected void doSubDecode(ByteBuffer bb) {
-        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_CMPP2;
+        boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         bb.get(msgId);
         pkTotal = bb.get();
-        pkNumber= bb.get();
-        registeredDelivery= bb.get();
-        msgLevel=bb.get();
+        pkNumber = bb.get();
+        registeredDelivery = bb.get();
+        msgLevel = bb.get();
         bb.get(serviceId);
-        feeUserType=bb.get();
+        feeUserType = bb.get();
         feeTerminalId = new byte[isCmpp2 ? 21 : 32];
         bb.get(feeTerminalId);
         if (!isCmpp2) { feeTerminalType = bb.get(); }
-        tppId=bb.get();
-        msgFmt=bb.get();
+        tppId = bb.get();
+        tpUdhi = bb.get();
+        msgFmt = bb.get();
         bb.get(msgSrc);
         bb.get(feeType);
         bb.get(feeCode);
         bb.get(validTime);
         bb.get(atTime);
         bb.get(srcId);
-        destUsrTl=bb.get();
+        destUsrTl = bb.get();
         destTerminalIds = new byte[isCmpp2 ? 21 * destUsrTl : 32 * destUsrTl];
         bb.get(destTerminalIds);
         if (!isCmpp2) { destTerminalType = bb.get(); }
-        msgLength = bb.get() & 0xFF;
+        msgLength = UnsignedBytes.toInt(bb.get());
         msgContent = new byte[msgLength];
         bb.get(msgContent);
         ReserveOrLinkId = new byte[isCmpp2 ? 8 : 20];
         bb.get(ReserveOrLinkId);
     }
-
 
 
     @Override
@@ -158,6 +163,9 @@ public class Submit extends CmppHead {
             return false;
         }
         if (registeredDelivery != submit.registeredDelivery) {
+            return false;
+        }
+        if (tpUdhi != submit.tpUdhi) {
             return false;
         }
         if (tppId != submit.tppId) {
@@ -216,6 +224,7 @@ public class Submit extends CmppHead {
         result = 31 * result + (feeTerminalId != null ? Arrays.hashCode(feeTerminalId) : 0);
         result = 31 * result + (int) feeTerminalType;
         result = 31 * result + (int) tppId;
+        result = 31 * result + (int) tpUdhi;
         result = 31 * result + (int) msgFmt;
         result = 31 * result + (msgSrc != null ? Arrays.hashCode(msgSrc) : 0);
         result = 31 * result + (feeType != null ? Arrays.hashCode(feeType) : 0);
@@ -410,5 +419,13 @@ public class Submit extends CmppHead {
 
     public void setReserveOrLinkId(byte[] reserveOrLinkId) {
         ReserveOrLinkId = reserveOrLinkId;
+    }
+
+    public byte getTpUdhi() {
+        return tpUdhi;
+    }
+
+    public void setTpUdhi(byte tpUdhi) {
+        this.tpUdhi = tpUdhi;
     }
 }

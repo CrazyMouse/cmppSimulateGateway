@@ -15,7 +15,7 @@ public class SubmitTest {
 
     @Test
     public void testSbumit2() throws Exception {
-        Submit s = new Submit(Constants.PROTOCALTYPE_CMPP2);
+        Submit s = new Submit(Constants.PROTOCALTYPE_VERSION_CMPP2);
 
         processCommon(s);
         s.setFeeTerminalId(new byte[21]);
@@ -25,7 +25,7 @@ public class SubmitTest {
         r.nextBytes(s.getDestTerminalIds());
         s.setReserveOrLinkId(new byte[8]);
         r.nextBytes(s.getReserveOrLinkId());
-        Submit s1 = new Submit(Constants.PROTOCALTYPE_CMPP2);
+        Submit s1 = new Submit(Constants.PROTOCALTYPE_VERSION_CMPP2);
         s1.doDecode(s.doEncode());
         Assert.assertEquals(s, s1);
     }
@@ -46,6 +46,7 @@ public class SubmitTest {
         r.nextBytes(s.getValidTime());
         r.nextBytes(s.getAtTime());
         r.nextBytes(s.getSrcId());
+        s.setTpUdhi((byte) 3);
         s.setDestUsrTl((byte) 2);
         s.setMsgContent(new byte[120]);
         r.nextBytes(s.getMsgContent());
@@ -53,7 +54,7 @@ public class SubmitTest {
 
     @Test
     public void testSubmit3() throws Exception {
-        Submit s = new Submit(Constants.PROTOCALTYPE_CMPP3);
+        Submit s = new Submit(Constants.PROTOCALTYPE_VERSION_CMPP3);
 
         processCommon(s);
         s.setFeeTerminalId(new byte[32]);
@@ -64,7 +65,7 @@ public class SubmitTest {
         r.nextBytes(s.getDestTerminalIds());
         s.setReserveOrLinkId(new byte[20]);
         r.nextBytes(s.getReserveOrLinkId());
-        Submit s1 = new Submit(Constants.PROTOCALTYPE_CMPP3);
+        Submit s1 = new Submit(Constants.PROTOCALTYPE_VERSION_CMPP3);
         s1.doDecode(s.doEncode());
         Assert.assertEquals(s, s1);
     }

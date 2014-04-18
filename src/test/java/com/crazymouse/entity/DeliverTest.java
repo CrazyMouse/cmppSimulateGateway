@@ -17,7 +17,7 @@ public class DeliverTest {
 
     @Test
     public void testRptCmpp3() {
-        Deliver d = new Deliver(Constants.PROTOCALTYPE_CMPP3);
+        Deliver d = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP3);
         processCommon(d);
 
         processCommonRpt(d);
@@ -30,14 +30,14 @@ public class DeliverTest {
         r.nextBytes(d.getDestTerminalId());
         d.setReservedOrLinkId(new byte[20]);
         r.nextBytes(d.getReservedOrLinkId());
-        Deliver d1 = new Deliver(Constants.PROTOCALTYPE_CMPP3);
+        Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP3);
         d1.doDecode(d.doEncode());
         assertEquals(d, d1);
     }
 
     @Test
     public void testRptCmpp2() {
-        Deliver d = new Deliver(Constants.PROTOCALTYPE_CMPP2);
+        Deliver d = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP2);
         processCommon(d);
 
         processCommonRpt(d);
@@ -47,14 +47,14 @@ public class DeliverTest {
         r.nextBytes(d.getDestTerminalId());
         d.setReservedOrLinkId(new byte[8]);
         r.nextBytes(d.getReservedOrLinkId());
-        Deliver d1 = new Deliver(Constants.PROTOCALTYPE_CMPP2);
+        Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP2);
         d1.doDecode(d.doEncode());
         assertEquals(d, d1);
     }
 
     @Test
     public void testMOCmpp3() {
-        Deliver d = new Deliver(Constants.PROTOCALTYPE_CMPP3);
+        Deliver d = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP3);
         processCommon(d);
         d.setSrcTerminalId(new byte[32]);
         r.nextBytes(d.getSrcTerminalId());
@@ -65,14 +65,14 @@ public class DeliverTest {
         d.setMsgContent(new byte[128]);
         r.nextBytes(d.getMsgContent());
         d.setRegisteredDelivery((byte) 0);
-        Deliver d1 = new Deliver(Constants.PROTOCALTYPE_CMPP3);
+        Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP3);
         d1.doDecode(d.doEncode());
         assertEquals(d, d1);
     }
 
     @Test
     public void testMOCmpp2() {
-        Deliver d = new Deliver(Constants.PROTOCALTYPE_CMPP2);
+        Deliver d = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP2);
         processCommon(d);
         d.setSrcTerminalId(new byte[21]);
         r.nextBytes(d.getSrcTerminalId());
@@ -81,7 +81,7 @@ public class DeliverTest {
         d.setMsgContent(new byte[160]);
         r.nextBytes(d.getMsgContent());
         d.setRegisteredDelivery((byte) 0);
-        Deliver d1 = new Deliver(Constants.PROTOCALTYPE_CMPP2);
+        Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP2);
         d1.doDecode(d.doEncode());
         assertEquals(d, d1);
     }
