@@ -15,7 +15,7 @@ public class SequenceGenerate {
         if (sequenceId.get() == Integer.MAX_VALUE) {
             sequenceId.set(1);
         }else {
-            sequenceId.incrementAndGet(); //sequenceId.addAndGet(1)出错
+            sequenceId.incrementAndGet();
         }
         return sequenceId.get();
     }

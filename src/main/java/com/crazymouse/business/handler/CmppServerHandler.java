@@ -1,6 +1,7 @@
 package com.crazymouse.business.handler;
 
 import com.crazymouse.entity.*;
+import com.crazymouse.util.FlowControl;
 import com.google.common.base.Charsets;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
@@ -30,11 +31,15 @@ public class CmppServerHandler extends ChannelDuplexHandler {
     private DateFormat df = new SimpleDateFormat("yyMMddHHmm");
     private DateFormat msgIdHeadFormat = new SimpleDateFormat("yyyyMMdd");
     private AtomicInteger magIdTailCount = new AtomicInteger(0);
+    private FlowControl flowControl;
+
+    public void setFlowControl(FlowControl flowControl) {
+        this.flowControl = flowControl;
+    }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        logger.info("" +
-                "Cinet:【{}】 closed Connection!",ctx.channel().remoteAddress());
+        logger.info("" + "Cinet:【{}】 closed Connection!", ctx.channel().remoteAddress());
     }
 
     @Override
@@ -93,7 +98,6 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         arraycopy(connect.getAuthenticatorSource(), 0, connectResp.getAuthenticatorIsmg(), 0, 16);
         connectResp.setVersion(connect.getVersion());
         ctx.writeAndFlush(connectResp);
-
     }
 
     private void processActiveTest(ChannelHandlerContext ctx, ActiveTest activeTest) {
@@ -108,12 +112,10 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         logger.debug("Received Submit");
         SubmitResp resp = new SubmitResp((Integer) ctx.channel().attr(Constants.PROTOCALTYPE_VERSION).get());
         resp.setSecquenceId(submit.getSecquenceId());
-        ByteBuffer.wrap(resp.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance()
-                .getTime())))
-                .putInt(magIdTailCount.incrementAndGet());
-        resp.setResult(0);
+        ByteBuffer.wrap(resp.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance().getTime()))).putInt(magIdTailCount.incrementAndGet());
+        resp.setResult(flowControl.isOverFlow() ? 8 : 0);
         ctx.writeAndFlush(resp);
-        if (submit.getRegisteredDelivery() == 1) {
+        if (submit.getRegisteredDelivery() == 1 && resp.getResult() == 0) {
             sendRpt(ctx, submit, resp);
         }
     }
@@ -129,8 +131,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         logger.debug("Send Rpt");
         Integer protocalType = (Integer) ctx.channel().attr(Constants.PROTOCALTYPE_VERSION).get();
         Deliver deliver = new Deliver((Integer) protocalType);
-        ByteBuffer.wrap(deliver.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance()
-                        .getTime()))).putInt(magIdTailCount.incrementAndGet());
+        ByteBuffer.wrap(deliver.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance().getTime()))).putInt(magIdTailCount.incrementAndGet());
         arraycopy(submit.getSrcId(), 0, deliver.getDestId(), 0, 21);
         arraycopy(submit.getServiceId(), 0, deliver.getServiceId(), 0, 10);
         deliver.setTpPid(submit.getTppId());
@@ -150,11 +151,12 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         deliver.setDestTerminalId(new byte[destTerminalIdLength]);
         for (int i = 0; i < submit.getDestUsrTl(); i++) {
             if (i == 0) {
-                arraycopy(submit.getDestTerminalIds(),0,deliver.getDestTerminalId(),0,destTerminalIdLength);
+                arraycopy(submit.getDestTerminalIds(), 0, deliver.getDestTerminalId(), 0, destTerminalIdLength);
                 ctx.writeAndFlush(deliver);
             }else {
                 Deliver delivernew = deliver.clone();//clone 防止原数据在未发出情况下被新数据覆盖
-                arraycopy(submit.getDestTerminalIds(),i*destTerminalIdLength,deliver.getDestTerminalId(),0,destTerminalIdLength);
+                arraycopy(submit.getDestTerminalIds(),
+                        i * destTerminalIdLength, deliver.getDestTerminalId(), 0, destTerminalIdLength);
                 ctx.writeAndFlush(delivernew);
             }
         }

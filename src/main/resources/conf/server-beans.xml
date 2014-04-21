@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
     <bean id="serverListener" class="com.crazymouse.business.ServerListener" init-method="startListener">
         <property name="configUtil" ref="configUtil"/>
         <property name="channelHandler" ref="cmppServerHandler"/>
     </bean>
     <bean id="configUtil" class="com.crazymouse.util.ConfigUtil" init-method="loadConf"/>
-    <bean id="cmppServerHandler" class="com.crazymouse.business.handler.CmppServerHandler"/>
+    <bean id="cmppServerHandler" class="com.crazymouse.business.handler.CmppServerHandler">
+        <property name="flowControl" ref="flowControl"/>
+    </bean>
+    <bean id="flowControl" class="com.crazymouse.util.impl.FlowControlImpl">
+        <constructor-arg index="0" value="5"/>
+    </bean>
+    <task:scheduler id="scheduler" pool-size="2"/>
+    <task:scheduled-tasks scheduler="scheduler">
+        <task:scheduled ref="flowControl" method="resetFlow" fixed-rate="1000"/>
+    </task:scheduled-tasks>
 </beans>
