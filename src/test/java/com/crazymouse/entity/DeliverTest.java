@@ -33,6 +33,8 @@ public class DeliverTest {
         Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP3);
         d1.doDecode(d.doEncode());
         assertEquals(d, d1);
+        Deliver d2 = d1.clone();
+        assertEquals(d2, d1);
     }
 
     @Test
@@ -50,6 +52,8 @@ public class DeliverTest {
         Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP2);
         d1.doDecode(d.doEncode());
         assertEquals(d, d1);
+        Deliver d2 = d1.clone();
+        assertEquals(d2, d1);
     }
 
     @Test
@@ -68,6 +72,8 @@ public class DeliverTest {
         Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP3);
         d1.doDecode(d.doEncode());
         assertEquals(d, d1);
+        Deliver d2 = d1.clone();
+        assertEquals(d2, d1);
     }
 
     @Test
@@ -84,6 +90,8 @@ public class DeliverTest {
         Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP2);
         d1.doDecode(d.doEncode());
         assertEquals(d, d1);
+        Deliver d2 = d1.clone();
+        assertEquals(d2, d1);
     }
 
     private void processCommonRpt(Deliver d) {

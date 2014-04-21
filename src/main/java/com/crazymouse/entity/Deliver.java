@@ -5,6 +5,8 @@ import com.google.common.primitives.UnsignedBytes;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import static java.lang.System.arraycopy;
+
 /**
  * Title ：
  * Description :
@@ -24,7 +26,7 @@ public class Deliver extends CmppHead {
     private int msgLength;//由于符号位关系，这里用int替代byte
     private byte[] msgContent;
 
-    private byte[] msg_Id = new byte[8];
+    private byte[] msg_Id = new byte[8];//状态报告中msgid与响应中对应
     private byte[] stat = new byte[7];
     private byte[] submitTime = new byte[10];
     private byte[] doneTime = new byte[10];
@@ -213,6 +215,46 @@ public class Deliver extends CmppHead {
         result = 31 * result + (smscSequence != null ? Arrays.hashCode(smscSequence) : 0);
         result = 31 * result + (reservedOrLinkId != null ? Arrays.hashCode(reservedOrLinkId) : 0);
         return result;
+    }
+
+    @Override
+    public Deliver clone()  {
+
+        Deliver deliver = new Deliver(this.protocalType);
+        deliver.totalLength = this.totalLength;
+        deliver.commandId = this.commandId;
+        deliver.secquenceId = this.secquenceId;
+        arraycopy(this.msgId, 0, deliver.msgId, 0, 8);
+        arraycopy(this.destId, 0, deliver.destId, 0, 21);
+        arraycopy(this.serviceId, 0, deliver.serviceId, 0, 10);
+        deliver.setTpPid(this.tpPid);
+        deliver.setTpUdhi(this.tpUdhi);
+        deliver.setMsgFmt(this.msgFmt);
+        if (this.srcTerminalId != null) {
+            deliver.srcTerminalId = new byte[this.srcTerminalId.length];
+            arraycopy(this.srcTerminalId, 0, deliver.srcTerminalId, 0, this.srcTerminalId.length);
+        }
+        deliver.srcTerminalType = this.srcTerminalType;
+        deliver.registeredDelivery = this.registeredDelivery;
+        deliver.msgLength = this.msgLength;
+        if (this.msgContent != null) {
+            deliver.msgContent = new byte[this.msgContent.length];
+            arraycopy(this.msgContent, 0, deliver.msgContent, 0, this.msgContent.length);
+        }
+        arraycopy(this.msg_Id, 0, deliver.msg_Id, 0, 8);
+        arraycopy(this.stat, 0, deliver.stat, 0, 7);
+        arraycopy(this.submitTime, 0, deliver.submitTime, 0, 10);
+        arraycopy(this.doneTime, 0, deliver.doneTime, 0, 10);
+        if (this.destTerminalId != null) {
+            deliver.destTerminalId = new byte[this.destTerminalId.length];
+            arraycopy(this.destTerminalId, 0, deliver.destTerminalId, 0, this.destTerminalId.length);
+        }
+        arraycopy(this.smscSequence, 0, deliver.smscSequence, 0, 4);
+        if (this.reservedOrLinkId != null) {
+            deliver.reservedOrLinkId = new byte[this.reservedOrLinkId.length];
+            arraycopy(this.reservedOrLinkId, 0, deliver.reservedOrLinkId, 0, this.reservedOrLinkId.length);
+        }
+        return deliver;
     }
 
     public byte[] getMsgId() {

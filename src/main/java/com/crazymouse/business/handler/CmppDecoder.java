@@ -27,12 +27,12 @@ public class CmppDecoder extends ReplayingDecoder {
             ctx.close();
             return;
         }
+        logger.debug("totalLength:{}",totalLength);
         byte[] bytes = new byte[totalLength];
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         bb.putInt(totalLength);
         bb.putInt(commandId);
         bb.putInt(in.readInt());
-        logger.debug("totalLength:{}", totalLength);
         in.readBytes(bytes,12,totalLength-12);
         CmppHead head = null;
         switch (commandId) {

@@ -30,11 +30,12 @@ public class ServerListener {
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .option(ChannelOption.TCP_NODELAY,true)
+                .childOption(ChannelOption.TCP_NODELAY,true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new IdleStateHandler(Integer.valueOf(configUtil.getConfig("idleSeconds")), 0, 0));
+                        ch.pipeline().addLast(new IdleStateHandler(0, 0, Integer.valueOf(configUtil.getConfig("idleSeconds"))));
                         ch.pipeline().addLast(new CmppDecoder());
                         ch.pipeline().addLast(new CmppEncoder());
                         ch.pipeline().addLast(channelHandler);

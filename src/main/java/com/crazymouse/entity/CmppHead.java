@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
  * Description :
  * Create Time: 14-4-14 下午2:10
  */
-public abstract class CmppHead implements Serializable {
+public abstract class CmppHead implements Serializable,Cloneable {
     protected int totalLength;
     protected int commandId;
     protected int secquenceId;
@@ -137,4 +137,5 @@ public abstract class CmppHead implements Serializable {
         commandId = byteBuffer.getInt();
         secquenceId = byteBuffer.getInt();
     }
+
 }
