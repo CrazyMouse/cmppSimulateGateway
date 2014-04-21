@@ -32,6 +32,12 @@ public class CmppServerHandler extends ChannelDuplexHandler {
     private AtomicInteger magIdTailCount = new AtomicInteger(0);
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        logger.info("" +
+                "Cinet:【{}】 closed Connection!",ctx.channel().remoteAddress());
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.warn("Handler 异常!,异常信息:{},连接关闭!", cause);
         ctx.close();
