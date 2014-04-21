@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.arraycopy;
 
@@ -25,7 +27,9 @@ import static java.lang.System.arraycopy;
 public class CmppServerHandler extends ChannelDuplexHandler {
     Logger logger = LoggerFactory.getLogger(CmppServerHandler.class);
     private Random random = new Random();
-    DateFormat df = new SimpleDateFormat("yyMMddHHmm");
+    private DateFormat df = new SimpleDateFormat("yyMMddHHmm");
+    private DateFormat msgIdHeadFormat = new SimpleDateFormat("yyyyMMdd");
+    private AtomicInteger magIdTailCount = new AtomicInteger(0);
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -98,7 +102,9 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         logger.debug("Received Submit");
         SubmitResp resp = new SubmitResp((Integer) ctx.channel().attr(Constants.PROTOCALTYPE_VERSION).get());
         resp.setSecquenceId(submit.getSecquenceId());
-        ByteBuffer.wrap(resp.getMsgId()).putInt(random.nextInt()).putInt(random.nextInt());
+        ByteBuffer.wrap(resp.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance()
+                .getTime())))
+                .putInt(magIdTailCount.incrementAndGet());
         resp.setResult(0);
         ctx.writeAndFlush(resp);
         if (submit.getRegisteredDelivery() == 1) {
@@ -117,7 +123,8 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         logger.debug("Send Rpt");
         Integer protocalType = (Integer) ctx.channel().attr(Constants.PROTOCALTYPE_VERSION).get();
         Deliver deliver = new Deliver((Integer) protocalType);
-        ByteBuffer.wrap(deliver.getMsgId()).putInt(random.nextInt()).putInt(random.nextInt());
+        ByteBuffer.wrap(deliver.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance()
+                        .getTime()))).putInt(magIdTailCount.incrementAndGet());
         arraycopy(submit.getSrcId(), 0, deliver.getDestId(), 0, 21);
         arraycopy(submit.getServiceId(), 0, deliver.getServiceId(), 0, 10);
         deliver.setTpPid(submit.getTppId());
