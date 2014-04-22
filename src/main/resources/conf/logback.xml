@@ -20,7 +20,7 @@
                 <MaxHistory>30</MaxHistory>
             </rollingPolicy>
             <layout class="ch.qos.logback.classic.PatternLayout">
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %C{50} :%L- %msg%n
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level %C{50} :%L- %msg%n
                 </pattern>
            </layout>
         </appender>
@@ -30,7 +30,7 @@
     <logger name="ch.qos.logback" level="OFF"/>
     <logger name="org.springframework" level="ERROR"/>
     <!-- 日志输出级别 -->
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STANDARD"/>
         <appender-ref ref="STDOUT" />
     </root>

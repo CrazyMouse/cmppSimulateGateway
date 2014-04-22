@@ -2,6 +2,7 @@ package com.crazymouse.business.handler;
 
 import com.crazymouse.entity.*;
 import com.crazymouse.util.FlowControl;
+import com.crazymouse.util.Statistic;
 import com.google.common.base.Charsets;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
@@ -101,7 +102,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
     }
 
     private void processActiveTest(ChannelHandlerContext ctx, ActiveTest activeTest) {
-        logger.info("Received heartbeat From:【{}】", ctx.channel().remoteAddress());
+        logger.debug("Received heartbeats From:【{}】", ctx.channel().remoteAddress());
         ActiveTestResp resp = new ActiveTestResp();
         resp.setReserved((byte) 0);
         resp.setSecquenceId(activeTest.getSecquenceId());
@@ -110,6 +111,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
 
     private void processSubmit(ChannelHandlerContext ctx, Submit submit) {
         logger.debug("Received Submit");
+        Statistic.addSubmit();
         SubmitResp resp = new SubmitResp((Integer) ctx.channel().attr(Constants.PROTOCALTYPE_VERSION).get());
         resp.setSecquenceId(submit.getSecquenceId());
         ByteBuffer.wrap(resp.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance().getTime()))).putInt(magIdTailCount.incrementAndGet());
@@ -150,6 +152,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         int destTerminalIdLength = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 21 : 32;
         deliver.setDestTerminalId(new byte[destTerminalIdLength]);
         for (int i = 0; i < submit.getDestUsrTl(); i++) {
+            Statistic.addDeliver();
             if (i == 0) {
                 arraycopy(submit.getDestTerminalIds(), 0, deliver.getDestTerminalId(), 0, destTerminalIdLength);
                 ctx.writeAndFlush(deliver);

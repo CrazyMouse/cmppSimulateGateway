@@ -11,10 +11,12 @@
         <property name="flowControl" ref="flowControl"/>
     </bean>
     <bean id="flowControl" class="com.crazymouse.util.impl.FlowControlImpl">
-        <constructor-arg index="0" value="5"/>
+        <constructor-arg index="0" value="${flowLimit}"/>
     </bean>
+    <bean id="statistic" class="com.crazymouse.util.Statistic"/>
     <task:scheduler id="scheduler" pool-size="2"/>
     <task:scheduled-tasks scheduler="scheduler">
         <task:scheduled ref="flowControl" method="resetFlow" fixed-rate="1000"/>
+        <task:scheduled ref="statistic" method="logOutSpeed" fixed-rate="1000"/>
     </task:scheduled-tasks>
 </beans>
