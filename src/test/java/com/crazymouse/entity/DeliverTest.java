@@ -22,13 +22,10 @@ public class DeliverTest {
 
         processCommonRpt(d);
 
-        d.setSrcTerminalId(new byte[32]);
         r.nextBytes(d.getSrcTerminalId());
         d.setSrcTerminalType((byte) 4);
 
-        d.setDestTerminalId(new byte[32]);
         r.nextBytes(d.getDestTerminalId());
-        d.setReservedOrLinkId(new byte[20]);
         r.nextBytes(d.getReservedOrLinkId());
         Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP3);
         d1.doDecode(d.doEncode());
@@ -43,11 +40,8 @@ public class DeliverTest {
         processCommon(d);
 
         processCommonRpt(d);
-        d.setSrcTerminalId(new byte[21]);
         r.nextBytes(d.getSrcTerminalId());
-        d.setDestTerminalId(new byte[21]);
         r.nextBytes(d.getDestTerminalId());
-        d.setReservedOrLinkId(new byte[8]);
         r.nextBytes(d.getReservedOrLinkId());
         Deliver d1 = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP2);
         d1.doDecode(d.doEncode());
@@ -60,10 +54,8 @@ public class DeliverTest {
     public void testMOCmpp3() {
         Deliver d = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP3);
         processCommon(d);
-        d.setSrcTerminalId(new byte[32]);
         r.nextBytes(d.getSrcTerminalId());
         d.setSrcTerminalType((byte) 4);
-        d.setReservedOrLinkId(new byte[20]);
         r.nextBytes(d.getReservedOrLinkId());
 
         d.setMsgContent(new byte[128]);
@@ -80,9 +72,7 @@ public class DeliverTest {
     public void testMOCmpp2() {
         Deliver d = new Deliver(Constants.PROTOCALTYPE_VERSION_CMPP2);
         processCommon(d);
-        d.setSrcTerminalId(new byte[21]);
         r.nextBytes(d.getSrcTerminalId());
-        d.setReservedOrLinkId(new byte[8]);
         r.nextBytes(d.getReservedOrLinkId());
         d.setMsgContent(new byte[160]);
         r.nextBytes(d.getMsgContent());

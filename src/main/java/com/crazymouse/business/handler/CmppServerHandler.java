@@ -139,7 +139,6 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         deliver.setTpPid(submit.getTppId());
         deliver.setTpUdhi(submit.getTpUdhi());
         deliver.setMsgFmt((byte) 15);
-        deliver.setSrcTerminalId(new byte[submit.getFeeTerminalId().length]);
         arraycopy(submit.getFeeTerminalId(), 0, deliver.getSrcTerminalId(), 0, submit.getFeeTerminalId().length);
         deliver.setSrcTerminalType((byte) 0);
         deliver.setRegisteredDelivery((byte) 1);
@@ -148,9 +147,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         arraycopy(df.format(new Date()).getBytes(Charsets.US_ASCII), 0, deliver.getSubmitTime(), 0, 10);
         arraycopy(deliver.getSubmitTime(), 0, deliver.getDoneTime(), 0, 10);
         random.nextBytes(deliver.getSmscSequence());
-        deliver.setReservedOrLinkId(new byte[protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 8 : 20]);
         int destTerminalIdLength = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 21 : 32;
-        deliver.setDestTerminalId(new byte[destTerminalIdLength]);
         for (int i = 0; i < submit.getDestUsrTl(); i++) {
             Statistic.addDeliver();
             if (i == 0) {

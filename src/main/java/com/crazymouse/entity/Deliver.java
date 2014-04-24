@@ -37,6 +37,8 @@ public class Deliver extends CmppHead {
     public Deliver(int protocalType) {
         super.protocalType = protocalType;
         super.commandId = CMPPConstant.APP_DELIVER;
+        srcTerminalId = new byte[protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 21 : 32];
+        reservedOrLinkId = new byte[protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 8 : 20];
     }
 
 
@@ -97,26 +99,23 @@ public class Deliver extends CmppHead {
         tpPid = bb.get();
         tpUdhi = bb.get();
         msgFmt = bb.get();
-        srcTerminalId = new byte[isCmpp2 ? 21 : 32];
         bb.get(srcTerminalId);
         if (!isCmpp2) {
             srcTerminalType = bb.get();
         }
-        registeredDelivery = bb.get();
+        setRegisteredDelivery(bb.get());
         msgLength = UnsignedBytes.toInt(bb.get());
         if (registeredDelivery == 1) {
             bb.get(msg_Id);
             bb.get(stat);
             bb.get(submitTime);
             bb.get(doneTime);
-            destTerminalId = new byte[isCmpp2 ? 21 : 32];
             bb.get(destTerminalId);
             bb.get(smscSequence);
         }else {
             msgContent = new byte[msgLength];
             bb.get(msgContent);
         }
-        reservedOrLinkId = new byte[isCmpp2 ? 8 : 20];
         bb.get(reservedOrLinkId);
     }
 
@@ -309,10 +308,6 @@ public class Deliver extends CmppHead {
         return srcTerminalId;
     }
 
-    public void setSrcTerminalId(byte[] srcTerminalId) {
-        this.srcTerminalId = srcTerminalId;
-    }
-
     public byte getSrcTerminalType() {
         return srcTerminalType;
     }
@@ -327,6 +322,9 @@ public class Deliver extends CmppHead {
 
     public void setRegisteredDelivery(byte registeredDelivery) {
         this.registeredDelivery = registeredDelivery;
+        if(1==registeredDelivery){
+            destTerminalId = new byte[protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 21 : 32];
+        }
     }
 
     public int getMsgLength() {
@@ -377,10 +375,6 @@ public class Deliver extends CmppHead {
         return destTerminalId;
     }
 
-    public void setDestTerminalId(byte[] destTerminalId) {
-        this.destTerminalId = destTerminalId;
-    }
-
     public byte[] getSmscSequence() {
         return smscSequence;
     }
@@ -393,7 +387,4 @@ public class Deliver extends CmppHead {
         return reservedOrLinkId;
     }
 
-    public void setReservedOrLinkId(byte[] reservedOrLinkId) {
-        this.reservedOrLinkId = reservedOrLinkId;
-    }
 }

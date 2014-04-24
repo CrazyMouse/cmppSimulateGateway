@@ -34,11 +34,13 @@ public class Submit extends CmppHead {
     private byte destTerminalType;
     private int msgLength;
     private byte[] msgContent;
-    private byte[] ReserveOrLinkId;
+    private byte[] reserveOrLinkId;
 
     public Submit(int protocalType) {
         super.protocalType = protocalType;
         super.commandId = CMPPConstant.APP_SUBMIT;
+        feeTerminalId = new byte[protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 21 : 32];
+        reserveOrLinkId = new byte[protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2 ? 8 : 20];
     }
 
     @Override
@@ -84,7 +86,7 @@ public class Submit extends CmppHead {
 
         bb.put((byte) msgLength);
         bb.put(msgContent);
-        bb.put(ReserveOrLinkId);
+        bb.put(reserveOrLinkId);
     }
 
     @Override
@@ -97,7 +99,6 @@ public class Submit extends CmppHead {
         msgLevel = bb.get();
         bb.get(serviceId);
         feeUserType = bb.get();
-        feeTerminalId = new byte[isCmpp2 ? 21 : 32];
         bb.get(feeTerminalId);
         if (!isCmpp2) { feeTerminalType = bb.get(); }
         tppId = bb.get();
@@ -109,15 +110,13 @@ public class Submit extends CmppHead {
         bb.get(validTime);
         bb.get(atTime);
         bb.get(srcId);
-        destUsrTl = bb.get();
-        destTerminalIds = new byte[isCmpp2 ? 21 * destUsrTl : 32 * destUsrTl];
+        setDestUsrTl(bb.get());
         bb.get(destTerminalIds);
         if (!isCmpp2) { destTerminalType = bb.get(); }
         msgLength = UnsignedBytes.toInt(bb.get());
         msgContent = new byte[msgLength];
         bb.get(msgContent);
-        ReserveOrLinkId = new byte[isCmpp2 ? 8 : 20];
-        bb.get(ReserveOrLinkId);
+        bb.get(reserveOrLinkId);
     }
 
 
@@ -171,7 +170,7 @@ public class Submit extends CmppHead {
         if (tppId != submit.tppId) {
             return false;
         }
-        if (!Arrays.equals(ReserveOrLinkId, submit.ReserveOrLinkId)) {
+        if (!Arrays.equals(reserveOrLinkId, submit.reserveOrLinkId)) {
             return false;
         }
         if (!Arrays.equals(atTime, submit.atTime)) {
@@ -237,7 +236,7 @@ public class Submit extends CmppHead {
         result = 31 * result + (int) destTerminalType;
         result = 31 * result + msgLength;
         result = 31 * result + (msgContent != null ? Arrays.hashCode(msgContent) : 0);
-        result = 31 * result + (ReserveOrLinkId != null ? Arrays.hashCode(ReserveOrLinkId) : 0);
+        result = 31 * result + (reserveOrLinkId != null ? Arrays.hashCode(reserveOrLinkId) : 0);
         return result;
     }
 
@@ -299,10 +298,6 @@ public class Submit extends CmppHead {
 
     public byte[] getFeeTerminalId() {
         return feeTerminalId;
-    }
-
-    public void setFeeTerminalId(byte[] feeTerminalId) {
-        this.feeTerminalId = feeTerminalId;
     }
 
     public byte getFeeTerminalType() {
@@ -383,14 +378,11 @@ public class Submit extends CmppHead {
 
     public void setDestUsrTl(byte destUsrTl) {
         this.destUsrTl = destUsrTl;
+        destTerminalIds = new byte[destUsrTl*feeTerminalId.length];
     }
 
     public byte[] getDestTerminalIds() {
         return destTerminalIds;
-    }
-
-    public void setDestTerminalIds(byte[] destTerminalIds) {
-        this.destTerminalIds = destTerminalIds;
     }
 
     public byte getDestTerminalType() {
@@ -414,11 +406,7 @@ public class Submit extends CmppHead {
     }
 
     public byte[] getReserveOrLinkId() {
-        return ReserveOrLinkId;
-    }
-
-    public void setReserveOrLinkId(byte[] reserveOrLinkId) {
-        ReserveOrLinkId = reserveOrLinkId;
+        return reserveOrLinkId;
     }
 
     public byte getTpUdhi() {

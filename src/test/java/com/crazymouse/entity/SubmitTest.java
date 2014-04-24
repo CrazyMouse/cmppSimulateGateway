@@ -18,12 +18,9 @@ public class SubmitTest {
         Submit s = new Submit(Constants.PROTOCALTYPE_VERSION_CMPP2);
 
         processCommon(s);
-        s.setFeeTerminalId(new byte[21]);
         r.nextBytes(s.getFeeTerminalId());
 
-        s.setDestTerminalIds(new byte[21 * s.getDestUsrTl()]);
         r.nextBytes(s.getDestTerminalIds());
-        s.setReserveOrLinkId(new byte[8]);
         r.nextBytes(s.getReserveOrLinkId());
         Submit s1 = new Submit(Constants.PROTOCALTYPE_VERSION_CMPP2);
         s1.doDecode(s.doEncode());
@@ -57,13 +54,10 @@ public class SubmitTest {
         Submit s = new Submit(Constants.PROTOCALTYPE_VERSION_CMPP3);
 
         processCommon(s);
-        s.setFeeTerminalId(new byte[32]);
         r.nextBytes(s.getFeeTerminalId());
         s.setFeeTerminalType((byte) 1);
         s.setDestTerminalType((byte) 2);
-        s.setDestTerminalIds(new byte[32 * s.getDestUsrTl()]);
         r.nextBytes(s.getDestTerminalIds());
-        s.setReserveOrLinkId(new byte[20]);
         r.nextBytes(s.getReserveOrLinkId());
         Submit s1 = new Submit(Constants.PROTOCALTYPE_VERSION_CMPP3);
         s1.doDecode(s.doEncode());
