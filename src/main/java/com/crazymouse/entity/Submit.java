@@ -45,7 +45,6 @@ public class Submit extends CmppHead {
 
     @Override
     protected void processHead() {
-        msgLength = msgContent.length;
         boolean isCmpp2 = protocalType == Constants.PROTOCALTYPE_VERSION_CMPP2;
         if (isCmpp2) {
             totalLength = 138 + 21 * destUsrTl + msgLength;
@@ -403,6 +402,7 @@ public class Submit extends CmppHead {
 
     public void setMsgContent(byte[] msgContent) {
         this.msgContent = msgContent;
+        msgLength = msgContent.length;
     }
 
     public byte[] getReserveOrLinkId() {
@@ -415,5 +415,146 @@ public class Submit extends CmppHead {
 
     public void setTpUdhi(byte tpUdhi) {
         this.tpUdhi = tpUdhi;
+    }
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Submit{");
+        sb.append(super.toString());
+        sb.append("msgId=");
+        if (msgId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < msgId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(msgId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", pkTotal=").append(pkTotal);
+        sb.append(", pkNumber=").append(pkNumber);
+        sb.append(", registeredDelivery=").append(registeredDelivery);
+        sb.append(", msgLevel=").append(msgLevel);
+        sb.append(", serviceId=");
+        if (serviceId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < serviceId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(serviceId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", feeUserType=").append(feeUserType);
+        sb.append(", feeTerminalId=");
+        if (feeTerminalId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < feeTerminalId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(feeTerminalId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", feeTerminalType=").append(feeTerminalType);
+        sb.append(", tppId=").append(tppId);
+        sb.append(", tpUdhi=").append(tpUdhi);
+        sb.append(", msgFmt=").append(msgFmt);
+        sb.append(", msgSrc=");
+        if (msgSrc == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < msgSrc.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(msgSrc[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", feeType=");
+        if (feeType == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < feeType.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(feeType[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", feeCode=");
+        if (feeCode == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < feeCode.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(feeCode[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", validTime=");
+        if (validTime == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < validTime.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(validTime[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", atTime=");
+        if (atTime == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < atTime.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(atTime[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", srcId=");
+        if (srcId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < srcId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(srcId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", destUsrTl=").append(destUsrTl);
+        sb.append(", destTerminalIds=");
+        if (destTerminalIds == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < destTerminalIds.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(destTerminalIds[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", destTerminalType=").append(destTerminalType);
+        sb.append(", msgLength=").append(msgLength);
+        sb.append(", msgContent=");
+        if (msgContent == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < msgContent.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(msgContent[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", reserveOrLinkId=");
+        if (reserveOrLinkId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < reserveOrLinkId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(reserveOrLinkId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append('}');
+        return sb.toString();
     }
 }

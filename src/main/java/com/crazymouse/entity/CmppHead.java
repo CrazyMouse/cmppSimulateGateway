@@ -138,4 +138,15 @@ public abstract class CmppHead implements Serializable,Cloneable {
         secquenceId = byteBuffer.getInt();
     }
 
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CmppHead{");
+        sb.append("totalLength=").append(totalLength);
+        sb.append(", commandId=").append(commandId);
+        sb.append(", secquenceId=").append(secquenceId);
+        sb.append(", protocalType=").append(protocalType);
+        sb.append('}');
+        return sb.toString();
+    }
 }
