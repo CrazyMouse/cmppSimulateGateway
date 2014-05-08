@@ -103,4 +103,24 @@ public class ConnectResp extends CmppHead {
         result = 31 * result + (int) version;
         return result;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ConnectResp{");
+        sb.append(super.toString());
+        sb.append("status=").append(status);
+        sb.append(", authenticatorIsmg=");
+        if (authenticatorIsmg == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < authenticatorIsmg.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(authenticatorIsmg[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", version=").append(version);
+        sb.append('}');
+        return sb.toString();
+    }
 }

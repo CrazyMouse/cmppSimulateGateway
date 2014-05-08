@@ -61,4 +61,13 @@ public class ActiveTestResp extends CmppHead {
         result = 31 * result + (int) reserved;
         return result;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ActiveTestResp{");
+        sb.append(super.toString());
+        sb.append("reserved=").append(reserved);
+        sb.append('}');
+        return sb.toString();
+    }
 }

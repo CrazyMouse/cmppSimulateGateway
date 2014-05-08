@@ -93,4 +93,23 @@ public class SubmitResp extends CmppHead {
     public void setResult(int result) {
         this.result = result;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("SubmitResp{");
+        sb.append(super.toString());
+        sb.append("msgId=");
+        if (msgId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < msgId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(msgId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", result=").append(result);
+        sb.append('}');
+        return sb.toString();
+    }
 }

@@ -110,4 +110,43 @@ public class Connect extends CmppHead {
     public void setVersion(byte version) {
         this.version = version;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Connect{");
+        sb.append(super.toString());
+        sb.append("sourceAddr=");
+        if (sourceAddr == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < sourceAddr.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(sourceAddr[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", authenticatorSource=");
+        if (authenticatorSource == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < authenticatorSource.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(authenticatorSource[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", version=").append(version);
+        sb.append(", timeStamp=");
+        if (timeStamp == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < timeStamp.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(timeStamp[i]);
+            }
+            sb.append(']');
+        }
+        sb.append('}');
+        return sb.toString();
+    }
 }

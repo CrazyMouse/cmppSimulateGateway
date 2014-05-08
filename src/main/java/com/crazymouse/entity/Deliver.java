@@ -387,4 +387,137 @@ public class Deliver extends CmppHead {
         return reservedOrLinkId;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Deliver{");
+        sb.append(super.toString());
+        sb.append("msgId=");
+        if (msgId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < msgId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(msgId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", destId=");
+        if (destId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < destId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(destId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", serviceId=");
+        if (serviceId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < serviceId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(serviceId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", tpPid=").append(tpPid);
+        sb.append(", tpUdhi=").append(tpUdhi);
+        sb.append(", msgFmt=").append(msgFmt);
+        sb.append(", srcTerminalId=");
+        if (srcTerminalId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < srcTerminalId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(srcTerminalId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", srcTerminalType=").append(srcTerminalType);
+        sb.append(", registeredDelivery=").append(registeredDelivery);
+        sb.append(", msgLength=").append(msgLength);
+        sb.append(", msgContent=");
+        if (msgContent == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < msgContent.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(msgContent[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", msg_Id=");
+        if (msg_Id == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < msg_Id.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(msg_Id[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", stat=");
+        if (stat == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < stat.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(stat[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", submitTime=");
+        if (submitTime == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < submitTime.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(submitTime[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", doneTime=");
+        if (doneTime == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < doneTime.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(doneTime[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", destTerminalId=");
+        if (destTerminalId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < destTerminalId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(destTerminalId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", smscSequence=");
+        if (smscSequence == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < smscSequence.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(smscSequence[i]);
+            }
+            sb.append(']');
+        }
+        sb.append(", reservedOrLinkId=");
+        if (reservedOrLinkId == null) {
+            sb.append("null");
+        }else {
+            sb.append('[');
+            for (int i = 0; i < reservedOrLinkId.length; ++i) {
+                sb.append(i == 0 ? "" : ", ").append(reservedOrLinkId[i]);
+            }
+            sb.append(']');
+        }
+        sb.append('}');
+        return sb.toString();
+    }
 }
