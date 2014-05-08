@@ -17,6 +17,6 @@
     <task:scheduler id="scheduler" pool-size="2"/>
     <task:scheduled-tasks scheduler="scheduler">
         <task:scheduled ref="flowControl" method="resetFlow" fixed-rate="1000"/>
-        <!--<task:scheduled ref="statistic" method="logOutSpeed" fixed-rate="1000"/>-->
+        <task:scheduled ref="statistic" method="logOutSpeed" fixed-rate="1000"/>
     </task:scheduled-tasks>
 </beans>

@@ -55,7 +55,7 @@ public class CmppDecoder extends ReplayingDecoder {
         }
         if (null != head) {
             logger.debug("【Bytes Read complete:{}】",in.readerIndex()==in.writerIndex());
-            head.doDecode(bytes);
+            head.setMsgBytes(bytes);
             out.add(head);
         }
     }
