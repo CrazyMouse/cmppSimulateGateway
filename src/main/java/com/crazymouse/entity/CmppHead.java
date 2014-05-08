@@ -8,12 +8,13 @@ import java.nio.ByteBuffer;
  * Description :
  * Create Time: 14-4-14 下午2:10
  */
-public abstract class CmppHead implements Serializable,Cloneable {
+public abstract class CmppHead implements Serializable, Cloneable {
     protected int totalLength;
     protected int commandId;
     protected int secquenceId;
 
     protected int protocalType;
+    protected byte[] msgBytes;
 
     public int getTotalLength() {
         return totalLength;
@@ -66,6 +67,7 @@ public abstract class CmppHead implements Serializable,Cloneable {
         bb.putInt(commandId);
         bb.putInt(secquenceId);
         doSubEncode(bb);
+        this.msgBytes = bb.array();
         return bb.array();
     }
 
@@ -78,7 +80,15 @@ public abstract class CmppHead implements Serializable,Cloneable {
      * @return
      */
     public void doDecode(byte[] bytes) {
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        this.msgBytes = bytes;
+        doDecode();
+    }
+
+    public void doDecode() {
+        if (msgBytes == null) {
+            throw new RuntimeException("Object Bytes is Null");
+        }
+        ByteBuffer bb = ByteBuffer.wrap(msgBytes);
         totalLength = bb.getInt();
         commandId = bb.getInt();
         secquenceId = bb.getInt();
@@ -148,5 +158,13 @@ public abstract class CmppHead implements Serializable,Cloneable {
         sb.append(", protocalType=").append(protocalType);
         sb.append('}');
         return sb.toString();
+    }
+
+    public byte[] getMsgBytes() {
+        return msgBytes;
+    }
+
+    public void setMsgBytes(byte[] msgBytes) {
+        this.msgBytes = msgBytes;
     }
 }

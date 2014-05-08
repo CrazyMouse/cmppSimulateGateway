@@ -14,6 +14,6 @@ public class CmppEncoder extends MessageToByteEncoder<CmppHead> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, CmppHead msg, ByteBuf out) throws Exception {
-        out.writeBytes(msg.doEncode());
+        out.writeBytes(msg.getMsgBytes());
     }
 }

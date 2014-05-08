@@ -30,7 +30,7 @@
     <logger name="ch.qos.logback" level="OFF"/>
     <logger name="org.springframework" level="ERROR"/>
     <!-- 日志输出级别 -->
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STANDARD"/>
         <appender-ref ref="STDOUT" />
     </root>

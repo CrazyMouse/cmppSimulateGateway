@@ -16,6 +16,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.arraycopy;
@@ -33,6 +35,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
     private DateFormat msgIdHeadFormat = new SimpleDateFormat("yyyyMMdd");
     private AtomicInteger magIdTailCount = new AtomicInteger(0);
     private FlowControl flowControl;
+    private ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public void setFlowControl(FlowControl flowControl) {
         this.flowControl = flowControl;
@@ -56,22 +59,29 @@ public class CmppServerHandler extends ChannelDuplexHandler {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        CmppHead cmppMsg = (CmppHead) msg;
-        switch (cmppMsg.getCommandId()) {
-            case CMPPConstant.APP_SUBMIT:
-                processSubmit(ctx, (Submit) cmppMsg);
-                break;
-            case CMPPConstant.APP_ACTIVE_TEST:
-                processActiveTest(ctx, (ActiveTest) cmppMsg);
-                break;
-            case CMPPConstant.CMPP_CONNECT:
-                processConnect(ctx, (Connect) cmppMsg);
-                break;
-            case CMPPConstant.APP_DELIVER_RESP:
-                processDeliverResp((DeliverResp) cmppMsg);
-                break;
-        }
+    public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                CmppHead cmppMsg = (CmppHead) msg;
+                cmppMsg.doDecode();
+                switch (cmppMsg.getCommandId()) {
+                    case CMPPConstant.APP_SUBMIT:
+                        processSubmit(ctx, (Submit) cmppMsg);
+                        break;
+                    case CMPPConstant.APP_ACTIVE_TEST:
+                        processActiveTest(ctx, (ActiveTest) cmppMsg);
+                        break;
+                    case CMPPConstant.CMPP_CONNECT:
+                        processConnect(ctx, (Connect) cmppMsg);
+                        break;
+                    case CMPPConstant.APP_DELIVER_RESP:
+                        processDeliverResp((DeliverResp) cmppMsg);
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -98,6 +108,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         connectResp.setStatus(0);
         arraycopy(connect.getAuthenticatorSource(), 0, connectResp.getAuthenticatorIsmg(), 0, 16);
         connectResp.setVersion(connect.getVersion());
+        connectResp.doEncode();
         ctx.writeAndFlush(connectResp);
     }
 
@@ -106,6 +117,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         ActiveTestResp resp = new ActiveTestResp();
         resp.setReserved((byte) 0);
         resp.setSecquenceId(activeTest.getSecquenceId());
+        resp.doEncode();
         ctx.writeAndFlush(resp);
     }
 
@@ -116,6 +128,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         resp.setSecquenceId(submit.getSecquenceId());
         ByteBuffer.wrap(resp.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance().getTime()))).putInt(magIdTailCount.incrementAndGet());
         resp.setResult(flowControl.isOverFlow() ? 8 : 0);
+        resp.doEncode();
         ctx.writeAndFlush(resp);
         if (submit.getRegisteredDelivery() == 1 && resp.getResult() == 0) {
             sendRpt(ctx, submit, resp);
@@ -152,11 +165,13 @@ public class CmppServerHandler extends ChannelDuplexHandler {
             Statistic.addDeliver();
             if (i == 0) {
                 arraycopy(submit.getDestTerminalIds(), 0, deliver.getDestTerminalId(), 0, destTerminalIdLength);
+                deliver.doEncode();
                 ctx.writeAndFlush(deliver);
             }else {
                 Deliver delivernew = deliver.clone();//clone 防止原数据在未发出情况下被新数据覆盖
                 arraycopy(submit.getDestTerminalIds(),
                         i * destTerminalIdLength, deliver.getDestTerminalId(), 0, destTerminalIdLength);
+                delivernew.doEncode();
                 ctx.writeAndFlush(delivernew);
             }
         }
