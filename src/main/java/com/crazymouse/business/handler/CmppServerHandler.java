@@ -1,5 +1,6 @@
 package com.crazymouse.business.handler;
 
+import com.crazymouse.business.ClientAuthentication;
 import com.crazymouse.entity.*;
 import com.crazymouse.util.FlowControl;
 import com.crazymouse.util.Statistic;
@@ -36,6 +37,11 @@ public class CmppServerHandler extends ChannelDuplexHandler {
     private AtomicInteger magIdTailCount = new AtomicInteger(0);
     private FlowControl flowControl;
     private ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private ClientAuthentication clientAuthentication;
+
+    public void setClientAuthentication(ClientAuthentication clientAuthentication) {
+        this.clientAuthentication = clientAuthentication;
+    }
 
     public void setFlowControl(FlowControl flowControl) {
         this.flowControl = flowControl;
@@ -102,14 +108,22 @@ public class CmppServerHandler extends ChannelDuplexHandler {
             ctx.close();
             return;
         }
+        boolean loginSuccess = clientAuthentication.authenticateClient(connect.getAuthenticatorSource(), connect.getTimeStamp(), ctx.channel().remoteAddress().toString());
+
         ctx.channel().attr(Constants.PROTOCALTYPE_VERSION).set((int) connect.getVersion());
         ConnectResp connectResp = new ConnectResp((Integer) ctx.channel().attr(Constants.PROTOCALTYPE_VERSION).get());
+        connectResp.setStatus(loginSuccess ? 0 : 3);
         connectResp.setSecquenceId(connect.getSecquenceId());
-        connectResp.setStatus(0);
         arraycopy(connect.getAuthenticatorSource(), 0, connectResp.getAuthenticatorIsmg(), 0, 16);
         connectResp.setVersion(connect.getVersion());
         connectResp.doEncode();
         ctx.writeAndFlush(connectResp);
+        if (!loginSuccess) {
+            logger.info("disabled Connection Form:【{}】,Closed! ", ctx.channel().remoteAddress().toString());
+            ctx.close();
+        }else {
+            logger.info("Connection From:【{}】login Success!", ctx.channel().remoteAddress().toString());
+        }
     }
 
     private void processActiveTest(ChannelHandlerContext ctx, ActiveTest activeTest) {
