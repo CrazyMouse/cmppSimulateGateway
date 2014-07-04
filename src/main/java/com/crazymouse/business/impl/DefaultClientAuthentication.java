@@ -21,6 +21,7 @@ public class DefaultClientAuthentication implements ClientAuthentication {
 
     @Override
     public boolean authenticateClient(byte[] authenticatorSource, byte[] timeStamp, String remoteAddr) {
+        if (!Boolean.valueOf(configUtil.getConfig("needValidate"))) return true;
         String user = configUtil.getConfig("user");
         String password = configUtil.getConfig("password");
         return Arrays.equals(ProtocelUtil.getAuthString(user, password, Ints.fromByteArray(timeStamp)), authenticatorSource);

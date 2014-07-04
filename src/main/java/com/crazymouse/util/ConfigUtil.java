@@ -49,8 +49,17 @@ public class ConfigUtil {
             }
             fi.close();
             logger.info("【配置更新】");
+            logOutConfig();
         } catch (IOException e) {
             logger.error("load properties Error:{}", e);
         }
+    }
+
+    /**
+     * 输出当前配置信息
+     */
+    private void logOutConfig() {
+        logger.info("current config info is:【{}】",cache.toString());
+
     }
 }
