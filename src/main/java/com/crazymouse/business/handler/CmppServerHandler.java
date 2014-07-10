@@ -116,7 +116,6 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         connectResp.setSecquenceId(connect.getSecquenceId());
         arraycopy(connect.getAuthenticatorSource(), 0, connectResp.getAuthenticatorIsmg(), 0, 16);
         connectResp.setVersion(connect.getVersion());
-        connectResp.doEncode();
         ctx.writeAndFlush(connectResp);
         if (!loginSuccess) {
             logger.info("disabled Connection Form:【{}】,Closed! ", ctx.channel().remoteAddress().toString());
@@ -131,7 +130,6 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         ActiveTestResp resp = new ActiveTestResp();
         resp.setReserved((byte) 0);
         resp.setSecquenceId(activeTest.getSecquenceId());
-        resp.doEncode();
         ctx.writeAndFlush(resp);
     }
 
@@ -142,7 +140,6 @@ public class CmppServerHandler extends ChannelDuplexHandler {
         resp.setSecquenceId(submit.getSecquenceId());
         ByteBuffer.wrap(resp.getMsgId()).putInt(Integer.valueOf(msgIdHeadFormat.format(Calendar.getInstance().getTime()))).putInt(magIdTailCount.incrementAndGet());
         resp.setResult(flowControl.isOverFlow() ? 8 : 0);
-        resp.doEncode();
         ctx.writeAndFlush(resp);
         if (submit.getRegisteredDelivery() == 1 && resp.getResult() == 0) {
             sendRpt(ctx, submit, resp);
@@ -179,13 +176,11 @@ public class CmppServerHandler extends ChannelDuplexHandler {
             Statistic.addDeliver();
             if (i == 0) {
                 arraycopy(submit.getDestTerminalIds(), 0, deliver.getDestTerminalId(), 0, destTerminalIdLength);
-                deliver.doEncode();
                 ctx.writeAndFlush(deliver);
             }else {
                 Deliver delivernew = deliver.clone();//clone 防止原数据在未发出情况下被新数据覆盖
                 arraycopy(submit.getDestTerminalIds(),
                         i * destTerminalIdLength, deliver.getDestTerminalId(), 0, destTerminalIdLength);
-                delivernew.doEncode();
                 ctx.writeAndFlush(delivernew);
             }
         }
