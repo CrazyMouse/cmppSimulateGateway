@@ -9,9 +9,9 @@ import java.nio.ByteBuffer;
  * Create Time: 14-4-14 下午2:10
  */
 public abstract class CmppHead implements Serializable, Cloneable {
-    protected int totalLength;
-    protected int commandId;
-    protected int secquenceId;
+    protected int totalLength;//不允许自行设置，doEncode()的时候会自动计算
+    protected int commandId; //不允许自行设置，对象创建时根据构造函数设置
+    protected int secquenceId;//需要自行赋值，请求与响应的相对应，无论上下行
 
     protected int protocalType;
     protected byte[] msgBytes;
@@ -20,16 +20,8 @@ public abstract class CmppHead implements Serializable, Cloneable {
         return totalLength;
     }
 
-    public void setTotalLength(int totalLength) {
-        this.totalLength = totalLength;
-    }
-
     public int getCommandId() {
         return commandId;
-    }
-
-    public void setCommandId(int commandId) {
-        this.commandId = commandId;
     }
 
     public int getSecquenceId() {
