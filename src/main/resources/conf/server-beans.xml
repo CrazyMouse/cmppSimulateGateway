@@ -10,6 +10,7 @@
     <bean id="cmppServerHandler" class="com.crazymouse.business.handler.CmppServerHandler">
         <property name="flowControl" ref="flowControl"/>
         <property name="clientAuthentication" ref="clientAuthentication"/>
+        <property name="clientManager" ref="clientManager"/>
     </bean>
     <bean id="flowControl" class="com.crazymouse.util.impl.FlowControlImpl">
         <constructor-arg index="0" value="${flowLimit}"/>
@@ -23,4 +24,5 @@
         <task:scheduled ref="flowControl" method="resetFlow" fixed-rate="1000"/>
         <!--<task:scheduled ref="statistic" method="logOutSpeed" fixed-rate="1000"/>-->
     </task:scheduled-tasks>
+    <bean id="clientManager" class="com.crazymouse.business.util.impl.ClientManagerImpl"/>
 </beans>

@@ -1,6 +1,7 @@
 package com.crazymouse.business.handler;
 
 import com.crazymouse.business.ClientAuthentication;
+import com.crazymouse.business.util.ClientManager;
 import com.crazymouse.entity.*;
 import com.crazymouse.util.FlowControl;
 import com.crazymouse.util.Statistic;
@@ -38,6 +39,11 @@ public class CmppServerHandler extends ChannelDuplexHandler {
     private FlowControl flowControl;
     private ExecutorService executorService = Executors.newFixedThreadPool(4);
     private ClientAuthentication clientAuthentication;
+    private ClientManager clientManager;
+
+    public void setClientManager(ClientManager clientManager) {
+        this.clientManager = clientManager;
+    }
 
     public void setClientAuthentication(ClientAuthentication clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
@@ -121,6 +127,7 @@ public class CmppServerHandler extends ChannelDuplexHandler {
             logger.info("disabled Connection Form:【{}】,Closed! ", ctx.channel().remoteAddress().toString());
             ctx.close();
         }else {
+            clientManager.registChannel(ctx.channel());
             logger.info("Connection From:【{}】login Success!", ctx.channel().remoteAddress().toString());
         }
     }

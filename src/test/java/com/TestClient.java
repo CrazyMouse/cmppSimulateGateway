@@ -20,6 +20,7 @@ import java.net.Socket;
 public class TestClient {
     /**
      * 测试登陆鉴权，正常和异常同时测试
+     *
      * @throws Exception
      */
     @Test
@@ -55,5 +56,19 @@ public class TestClient {
         resp1.doDecode(b1);
         socket1.close();
         Assert.assertEquals(3, resp1.getStatus());
+    }
+
+    @Test
+    public void testServerGroupCloseClient() throws Exception {
+        Socket socket = new Socket("127.0.0.1", 7890);
+        OutputStream out = socket.getOutputStream();
+        InputStream in = socket.getInputStream();
+        Connect connect = new Connect();
+        int timeStamp = 703152611;
+        connect.setAuthenticatorSource(ProtocelUtil.getAuthString("SpiderMan", "001009", timeStamp));
+        connect.setVersion(Constants.PROTOCALTYPE_VERSION_CMPP2.byteValue());
+        connect.setTimeStamp(Ints.toByteArray(timeStamp));
+        out.write(connect.doEncode());
+        Thread.sleep(10000);
     }
 }
